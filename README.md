@@ -4,6 +4,8 @@ Source code repository for the research project CIP2017030 of Universidad Centra
 
 Here you can find five different RL agents for two different environments implemented from [Gym](https://github.com/openai/gym/), an OpenAI toolkit.
 
+All the agents use the interactive feedback approach, where an external trainer offers advice given a certain probability, to improve the time required for learning.
+
 ### CartPole-v1 env
 
 For this environments has been developing three agents
