@@ -45,7 +45,7 @@ def select_advisor(agente, agents_folder, entorno):
     log_file.close()
     return None
 
-def generate_tests(agents_folder, entorno, epocas=500, is_irl=False):
+def generate_tests(agente, agents_folder, entorno, epocas=500, is_irl=False):
     #data save
     files = DataFiles()
     if is_irl:
@@ -55,11 +55,10 @@ def generate_tests(agents_folder, entorno, epocas=500, is_irl=False):
         agentsWeights = glob.glob(agents_folder + '/agenteRL*')
         filenameRewardsTest = agents_folder + '/rewardsTestRL.csv'
 
+    cantidad = len(agentsWeights)
     files.createFile(filenameRewardsTest)
     agentsWeights.sort(key=natural_keys)
 
-    # agente
-    agente = CartpoleDQN(entorno)
     for i in range(cantidad):
         print('Running', i, agentsWeights[i])
         agente.cargar(agentsWeights[i])

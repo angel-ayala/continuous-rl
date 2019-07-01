@@ -117,23 +117,24 @@ if __name__ == "__main__":
 
     #entorno
     entorno = gym.make("CartPole-v1")
-    log_file = open(resultsFolder + 'log.txt', 'w')
 
     #Training with autonomous RL
     print('RL is now training the teacher agent with autonomous RL')
     agent = trainAgent(tries, episodes, entorno)
+    # agent = ContinuousDoubleQlearning(entorno)
+    # generate_tests(agent, resultsFolder, entorno)
 
     # choose advisor
     teacherAgent, number, teacherPath = select_advisor(agent, resultsFolder, entorno)
     print('Using agent:', number, teacherPath)
-    log_file.write('Using agent: ' + str(number) + ' ' + teacherPath)
 
     #Training with interactive RL
     print('IRL is now training the learner agent with interactive RL')
-    learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)
+    learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)    
+    # learnerAgent = ContinuousDoubleQlearning(entorno)
+    # generate_tests(learnerAgent, resultsFolder, entorno, is_irl=True)
 
     plotRewards("rewards", with_irl=True)
-    log_file.close()
     print("Fin")
 
 # end of main method

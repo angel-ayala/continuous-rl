@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from agentes.continuous_qlearning import ContinuousQlearning
 
 from helpers.DataFiles import DataFiles
-from helpers.Agent import select_advisor
+from helpers.Agent import select_advisor, generate_tests
 
 resultsFolder = 'results/continuous_qlearning/tests/'
 # Create target Directory if don't exist
@@ -122,6 +122,7 @@ if __name__ == "__main__":
     print('RL is now training the teacher agent with autonomous RL')
     agent = trainAgent(tries, episodes, entorno)
     # agent = ContinuousQlearning(entorno)
+    # generate_tests(agent, resultsFolder, entorno)
 
     # choose advisor
     teacherAgent, number, teacherPath = select_advisor(agent, resultsFolder, entorno)
@@ -130,6 +131,8 @@ if __name__ == "__main__":
     #Training with interactive RL
     print('IRL is now training the learner agent with interactive RL')
     learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)
+    # learnerAgent = ContinuousQlearning(entorno)
+    # generate_tests(learnerAgent, resultsFolder, entorno, is_irl=True)
 
     plotRewards("rewards", with_irl=True)
     print("Fin")
