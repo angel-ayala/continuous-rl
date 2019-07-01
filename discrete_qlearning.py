@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov 20 12:43:35 2015
 
-@author: cruz
+@author: Angel
 
 """
 #Libraries Declaration
 import gym
 import math
+import os
 import numpy as np
 import matplotlib.pyplot as plt
-from agentes.CartpoleDiscreto import CartpoleDiscreto, ObservationDiscretize
+from agentes.discrete_qlearning import DiscreteQlearning, GymObservationDiscretize
 
 from helpers.DataFiles import DataFiles
+from helpers.Agent import select_advisor
 
-resultsFolder = 'results/cartpole_discreto/irl_feed03/'
+resultsFolder = 'results/discrete_qlearning/tests/'
+# Create target Directory if don't exist
+if not os.path.exists(resultsFolder):
+    os.mkdir(resultsFolder)
+    print("Directory " , resultsFolder ,  " Created ")
+else:
+    input("Output folder already exist. Press Enter to overwrite...")
 files = DataFiles()
 
 def plotRewards(filename):
@@ -76,9 +83,17 @@ def trainAgent(tries, episodes, scenario, teacherAgent=None, feedback=0):
         print('Training agent number: ' + str(i+1))
 
         # agente
-        agente = CartpoleDiscreto(entorno, epsilon=0.9, alpha=0.5)
-        # agent = Agent(scenario)
+        agente = DiscreteQlearning(entorno, epsilon=0.9, alpha=0.5)
         [rewards, epsilons, alphas] = agente.entrenar(episodes, teacherAgent, feedback)
+        recompensaPromedio = float(sum(rewards) / float(len(rewards)))
+
+        suffix = '_i' + str(i) + '_r' + str(recompensaPromedio)
+        if(teacherAgent is None):
+            agentPath = resultsFolder+'/agenteRL'+suffix+'.npy'
+        else:
+            agentPath = resultsFolder+'/agenteIRL'+suffix+'.npy'
+
+        agente.guardar(agentPath)
 
         # files.addToFile(filenameSteps, steps)
         files.addFloatToFile(filenameRewards, rewards)
@@ -91,34 +106,31 @@ def trainAgent(tries, episodes, scenario, teacherAgent=None, feedback=0):
 
 if __name__ == "__main__":
     print("Interactive RL for Cartpole is running ... ")
-    tries = 1
-    episodes = 350
+    tries = 50
+    episodes = 500
     feedbackProbability = 0.3
 
     #entorno
-    # scenario = Scenario()
     cartpole = gym.make("CartPole-v1")
 
     #discretizar
-#    limites = list(zip(cartpole.observation_space.low, cartpole.observation_space.high))
-#    limites[1] = [-0.5, 0.5]
-#    limites[3] = [-math.radians(50), math.radians(50)]
-#    rangos = (1, 1, 6, 3)
-#    print(limites)
-##
-#    entorno = ObservationDiscretize(cartpole, limites, rangos)
-#
-#    #Training with autonomous RL
-#    print('RL is now training the teacher agent with autonomous RL')
-#    teacherAgent = trainAgent(tries, episodes, entorno)
-#    teacherAgent.guardar(resultsFolder+'/agenteRL.npy')
-#    # teacherAgent = CartpoleDiscreto(entorno)
-#    # teacherAgent.cargar(resultsFolder+'/agente.npy')
-#
-    #Training with interactive RL
-#    print('IRL is now training the learner agent with interactive RL')
-#    learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)
-#    learnerAgent.guardar(resultsFolder + '/agenteIRL.npy')
+    limites = list(zip(cartpole.observation_space.low, cartpole.observation_space.high))
+    limites[1] = [-0.5, 0.5]
+    limites[3] = [-math.radians(50), math.radians(50)]
+    rangos = (1, 1, 6, 3)
+    entorno = GymObservationDiscretize(cartpole, limites, rangos)
+
+    #Training with autonomous RL
+    print('RL is now training the teacher agent with autonomous RL')
+    agent = trainAgent(tries, episodes, entorno)
+    # agent = DiscreteQlearning(entorno, epsilon=0.9, alpha=0.5)
+    # choose advisor
+    teacherAgent, number, teacherPath = select_advisor(agent, resultsFolder, entorno)
+    print('Using agent:', number, teacherPath)
+
+    # Training with interactive RL
+    print('IRL is now training the learner agent with interactive RL')
+    learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)
 
     plotRewards("rewards")
 #    plotRewards("alphas")
