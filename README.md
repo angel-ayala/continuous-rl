@@ -39,3 +39,25 @@ For the ALE environments, the *Space Invaders* is used.
 * Another has been implemented with DQN but with a CNN for the Q values approximation.
 
 *If you need more information, email me angel4ayala at gmail.com*
+
+## Results
+<table border="0">
+ <tr>
+    <td align="center"><b style="font-size:30px">Discrete Results</b></td>
+    <td align="center"><b style="font-size:30px">Continuous Results</b></td>
+ </tr>
+ <tr>
+    <td>
+      <img src="https://github.com/angel-ayala/continuous-rl/blob/v1/cartpole-discreto/rewards.png?raw=true" height=100% width=100%>
+      <br>
+      Results of training of 50 agents for the environment CartPole-v1 discretization state vector with BOXES,and feedback probability of 0.3.
+   </td>
+   <td>
+    <img src="https://github.com/angel-ayala/continuous-rl/blob/v1/cartpole-dqn/rewards.png?raw=true" height=100% width=100%>
+    <br>
+    Results of training of 50 agents for environment CartPole-v1 with continuous representation and feedback probability of 0.3.
+   </td>
+ </tr>
+</table>
+
+            
