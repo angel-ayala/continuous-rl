@@ -1,10 +1,28 @@
 # Reinforcement learning using continuous states and interactive feedback
 
-Source code repository for the research project CIP2017030 of Universidad Central de Chile, as partial support.
+Angel Ayala, Claudio Henríquez, Francisco Cruz
+
+Universidad Central de Chile
+
+Santiago, Chile
+
+Research in intelligent systems field has led to different learningmethods for machines to acquire knowledge, among them, reinforcement learning (RL). 
+Given the problem of the time required to learn how to develop a problem, using RL this work tackles the interactive reinforcement learning (IRL) approach as a way of solution for the training of agents. 
+Furthermore, this work also addresses the problem of continuous representations along with the interactive approach. 
+In this regards, we have performed experiments with simulated environments using different representations in the state vector in order to show the efficiency of this approach under a certain probability of interaction. 
+The obtained results in the simulated environments show a faster learning convergence when using continuous states and interactive feedback in comparison to discrete and autonomous reinforcement learning respectively.
+
+The authors gratefully acknowledge partial support by Universidad Central de Chile under the research project CIP2017030.
+
+DOI: [https://doi.org/10.1145/3309772.3309801](https://doi.org/10.1145/3309772.3309801)
+
+Paper: [Go to file](http://franciscocruz.cl/publications/Ayala_APPIS_2019_Proceedings.pdf)
 
 Here you can find five different RL agents for two different environments implemented from [Gym](https://github.com/openai/gym/), an OpenAI toolkit.
 
 All the agents use the interactive feedback approach, where an external trainer offers advice given a certain probability, to improve the time required for learning.
+
+## Experimental Setup
 
 ### CartPole-v1 env
 
