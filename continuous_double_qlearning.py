@@ -14,7 +14,7 @@ from agentes.continuous_qlearning import ContinuousDoubleQlearning
 from helpers.DataFiles import DataFiles
 from helpers.Agent import select_advisor
 
-resultsFolder = 'results/continuous_double_qlearning/tests/'
+resultsFolder = 'results/continuous_double_qlearning/'
 # Create target Directory if don't exist
 if not os.path.exists(resultsFolder):
     os.mkdir(resultsFolder)
@@ -25,13 +25,11 @@ files = DataFiles()
 
 def plotRewards(filename, with_irl=False):
     dataRL = np.genfromtxt(resultsFolder + filename + 'RL.csv', delimiter=',')
-    if with_irl:
-        dataIRL = np.genfromtxt(resultsFolder + filename + 'IRL.csv', delimiter=',')
     meansRL = np.mean(dataRL, axis=0)
-    if with_irl:
-        meansIRL = np.mean(dataIRL, axis=0)
     print('meansRL', np.average(meansRL))
     if with_irl:
+        dataIRL = np.genfromtxt(resultsFolder + filename + 'IRL.csv', delimiter=',')
+        meansIRL = np.mean(dataIRL, axis=0)
         print('meansIRL', np.average(meansIRL))
 
     convolveSet = 0
@@ -61,7 +59,7 @@ def plotRewards(filename, with_irl=False):
     #my_axis.set_ylim(Variables.punishment-0.8, Variables.reward)
     my_axis.set_xlim(convolveSet, len(meansRL))
     # my_axis.set_xlim(convolveSet, 500)
-
+    plt.savefig(resultsFolder + filename + '.png')
     plt.show()
 
 #end of plotRewards method
@@ -79,6 +77,7 @@ def trainAgent(tries, episodes, scenario, teacherAgent=None, feedback=0):
         filenameAlphas = resultsFolder + 'alphasIRL.csv'
 
     files.createFile(filenameEpsilons)
+    files.createFile(filenameSteps)
     files.createFile(filenameRewards)
     files.createFile(filenameAlphas)
 
@@ -88,10 +87,11 @@ def trainAgent(tries, episodes, scenario, teacherAgent=None, feedback=0):
         # agente
         agente = ContinuousDoubleQlearning(scenario)
         # agent = Agent(scenario)
-        [rewards, epsilons, alphas] = agente.entrenar(episodes, teacherAgent, feedback)
+        metrics = agente.entrenar(episodes, teacherAgent, feedback)
+        rewards = metrics['rewards']
         recompensaPromedio = float(sum(rewards) / float(len(rewards)))
 
-        suffix = '_i' + str(i) + '_r' + str(recompensaPromedio)
+        suffix = '_i{0}_r{1:.2f}'.format(i, recompensaPromedio)
         if(teacherAgent is None):
             agentPath = resultsFolder+'/agenteRL'+suffix+'.h5'
         else:
@@ -99,10 +99,10 @@ def trainAgent(tries, episodes, scenario, teacherAgent=None, feedback=0):
 
         agente.guardar(agentPath)
 
-        # files.addToFile(filenameSteps, steps)
-        files.addFloatToFile(filenameRewards, rewards)
-        files.addFloatToFile(filenameEpsilons, epsilons)
-        files.addFloatToFile(filenameAlphas, alphas)
+        files.addFloatToFile(filenameRewards, metrics['rewards'])
+        files.addFloatToFile(filenameSteps, metrics['steps'])
+        files.addFloatToFile(filenameEpsilons, metrics['epsilons'])
+        files.addFloatToFile(filenameAlphas, metrics['alphas'])
     #endfor
 
     return agente
@@ -122,7 +122,6 @@ if __name__ == "__main__":
     print('RL is now training the teacher agent with autonomous RL')
     agent = trainAgent(tries, episodes, entorno)
     # agent = ContinuousDoubleQlearning(entorno)
-    # generate_tests(agent, resultsFolder, entorno)
 
     # choose advisor
     teacherAgent, number, teacherPath = select_advisor(agent, resultsFolder, entorno)
@@ -130,9 +129,7 @@ if __name__ == "__main__":
 
     #Training with interactive RL
     print('IRL is now training the learner agent with interactive RL')
-    learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)    
-    # learnerAgent = ContinuousDoubleQlearning(entorno)
-    # generate_tests(learnerAgent, resultsFolder, entorno, is_irl=True)
+    learnerAgent = trainAgent(tries, episodes, entorno, teacherAgent, feedbackProbability)
 
     plotRewards("rewards", with_irl=True)
     print("Fin")

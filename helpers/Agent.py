@@ -36,7 +36,7 @@ def select_advisor(agente, agents_folder, entorno):
         agente.cargar(agentsWeights[i])
         rewards = agente.test(epocas)
         print(np.mean(rewards))
-        if np.mean(rewards) == 500:
+        if np.mean(rewards) > 495:
             print('passed!')
             log_file.write('Using agent: ' + str(i) + ' ' + agentsWeights[i])
             log_file.close()

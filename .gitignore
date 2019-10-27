@@ -1,2 +1,11 @@
-results*
 *__pycache__*
+
+# black list models
+results/*/*.npy
+results/*/*.h5
+
+# black list pdf files
+results/*/*.pdf
+
+# helpers folder
+/backup
