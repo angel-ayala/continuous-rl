@@ -62,12 +62,12 @@ For the ALE environments, the *Space Invaders* is used.
  </tr>
  <tr>
     <td>
-      <img src="https://github.com/angel-ayala/continuous-rl/blob/v2/results/discrete_qlearning/rewards.png?raw=true" height=100% width=100%>
+      <img src="https://github.com/angel-ayala/continuous-rl/blob/results/discrete_qlearning/rewards.png?raw=true" height=100% width=100%>
       <br>
       Results of training of 50 agents for the environment CartPole-v1 discretization state vector with BOXES,and feedback probability of 0.3.
    </td>
    <td>
-    <img src="https://github.com/angel-ayala/continuous-rl/blob/v2/results/continuous_double_qlearning/rewards.png?raw=true" height=100% width=100%>
+    <img src="https://github.com/angel-ayala/continuous-rl/blob/results/continuous_double_qlearning/rewards.png?raw=true" height=100% width=100%>
     <br>
     Results of training of 50 agents for environment CartPole-v1 with continuous representation and feedback probability of 0.3.
    </td>
