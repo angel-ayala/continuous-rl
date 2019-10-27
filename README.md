@@ -6,10 +6,10 @@ Universidad Central de Chile
 
 Santiago, Chile
 
-Research in intelligent systems field has led to different learningmethods for machines to acquire knowledge, among them, reinforcement learning (RL). 
-Given the problem of the time required to learn how to develop a problem, using RL this work tackles the interactive reinforcement learning (IRL) approach as a way of solution for the training of agents. 
-Furthermore, this work also addresses the problem of continuous representations along with the interactive approach. 
-In this regards, we have performed experiments with simulated environments using different representations in the state vector in order to show the efficiency of this approach under a certain probability of interaction. 
+Research in intelligent systems field has led to different learningmethods for machines to acquire knowledge, among them, reinforcement learning (RL).
+Given the problem of the time required to learn how to develop a problem, using RL this work tackles the interactive reinforcement learning (IRL) approach as a way of solution for the training of agents.
+Furthermore, this work also addresses the problem of continuous representations along with the interactive approach.
+In this regards, we have performed experiments with simulated environments using different representations in the state vector in order to show the efficiency of this approach under a certain probability of interaction.
 The obtained results in the simulated environments show a faster learning convergence when using continuous states and interactive feedback in comparison to discrete and autonomous reinforcement learning respectively.
 
 The authors gratefully acknowledge partial support by Universidad Central de Chile under the research project CIP2017030.
@@ -27,6 +27,7 @@ Here you can find five different RL agents for two different environments implem
 
 ### Updates
 -   Improvements of the ContinuousDQN agent 06/2019.
+-   Centered Cart for the ContinuousDQN agent 08/2019.
 -   Some codes reorganization!.
 
 ---
@@ -61,16 +62,14 @@ For the ALE environments, the *Space Invaders* is used.
  </tr>
  <tr>
     <td>
-      <img src="https://github.com/angel-ayala/continuous-rl/blob/v1/cartpole-discreto/rewards.png?raw=true" height=100% width=100%>
+      <img src="https://github.com/angel-ayala/continuous-rl/blob/v2/results/discrete_qlearning/rewards.png?raw=true" height=100% width=100%>
       <br>
       Results of training of 50 agents for the environment CartPole-v1 discretization state vector with BOXES,and feedback probability of 0.3.
    </td>
    <td>
-    <img src="https://github.com/angel-ayala/continuous-rl/blob/v1/cartpole-dqn/rewards.png?raw=true" height=100% width=100%>
+    <img src="https://github.com/angel-ayala/continuous-rl/blob/v2/results/continuous_double_qlearning/rewards.png?raw=true" height=100% width=100%>
     <br>
     Results of training of 50 agents for environment CartPole-v1 with continuous representation and feedback probability of 0.3.
    </td>
  </tr>
 </table>
-
-            
