@@ -18,25 +18,38 @@ DOI: [https://doi.org/10.1145/3309772.3309801](https://doi.org/10.1145/3309772.3
 
 Paper: [Go to file](http://franciscocruz.cl/publications/Ayala_APPIS_2019_Proceedings.pdf)
 
+
 Here you can find five different RL agents for two different environments implemented from [Gym](https://github.com/openai/gym/), an OpenAI toolkit.
 
-All the agents use the interactive feedback approach, where an external trainer offers advice given a certain probability, to improve the time required for learning.
+---
 
 ## Experimental Setup
 
-### CartPole-v1 env
+### Updates
+-   Improvements of the ContinuousDQN agent 06/2019.
+-   Some codes reorganization!.
+
+---
+
+### CartPole-v1 enviroment
 
 For this environments has been developing three agents
 
-* The first one, *cartpole-discreto*, use the BOXES method for discretization of the state space, storing the Q values in memory.
-* The others two, uses the DQN and DDQN methods for Q values approximation.
+*   The first one, ~~*cartpole-discreto*~~ *discrete_qlearning* agent, use the BOXES method for discretization of the state space, storing the Q values in memory.
+*   The others two, *continuous_qlearning* agents, uses the DQN and DDQN methods for Q values approximation.
+
+In the continuous observation space, the agent must learn an approximation function to achieve a better generalization. The agent **ContinuousQlearning** was designed to handle continuous observation space.
+
+---
 
 ### Arcade Learning Environments
 
 For the ALE environments, the *Space Invaders* is used.
 
-* One has been implemented with DQN for the RAM variants of the *Space Invaders*.
-* Another has been implemented with DQN but with a CNN for the Q values approximation.
+*   One has been implemented with DQN for the RAM variants of the *Space Invaders*.
+*   Another has been implemented with DQN but with a CNN for the Q values approximation.
+
+*This environments is still in research how optimize with the state-of-art*
 
 *If you need more information, email me angel4ayala at gmail.com*
 

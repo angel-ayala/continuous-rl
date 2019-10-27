@@ -8,7 +8,7 @@ import gym
 import math
 import numpy as np
 
-class CartpoleDiscreto:
+class DiscreteQlearning:
 
     def __init__(self, entorno, alpha = 0.5, epsilon = 0.9, gamma = 1):#0.99):
         self.entorno = entorno
@@ -21,8 +21,8 @@ class CartpoleDiscreto:
         self.alpha = alpha
         self.epsilon = epsilon
         self.gamma = gamma
-        # self.Q = np.zeros(entorno.unwrapped.rangos + (entorno.action_space.n, ))
         self.Q = np.random.uniform(-1, 1, entorno.unwrapped.rangos + (entorno.action_space.n, ))
+        self.expected_reward = 480
         # print(self.Q)
         self.MIN_ALPHA = 0.1
         self.MIN_EPSILON = 0.01
@@ -31,14 +31,20 @@ class CartpoleDiscreto:
         self.feedbackAmount = 0
     # end __init__
 
+
     #policy Epsilon-Greedy
-    def seleccionarAccion(self, estado):
+    def epsilonGreedyPolicy(self, estado, epsilon = 0.1):
         #exploracion
-        if np.random.rand() <= self.epsilon: #aleatorio
+        if np.random.rand() <= epsilon: #aleatorio
             return self.entorno.action_space.sample()
         #explotacion
         else: # mejor valor Q
             return np.argmax(self.Q[estado])
+    # end epsilonGreedyPolicy
+
+    def seleccionarAccion(self, estado):
+        accion = self.epsilonGreedyPolicy(estado, self.epsilon)
+        return accion
     # end seleccionarAccion
 
     def accionPorFeedback(self, estado, teacherAgent, feedbackProbability):
@@ -52,59 +58,76 @@ class CartpoleDiscreto:
         return action
     #end of accionPorFeedback
 
-    def actualizarPolitica(self, estadoAnterior, estadoActual, accion, reward):
-        # sarsa
-        #next_q = self.Q[estadoActual + (accionActual,)]
-        #self.Q[estadoAnterior + (accionAnterior, )] += self.alpha * (reward + self.gamma *
-        #                   next_q - self.Q[estadoAnterior + (accionAnterior, )])
+    def actualizarPolitica(self, estado, estado_sig, accion, reward):
         # q learning
-        best_q = np.amax(self.Q[estadoActual])
-        self.Q[estadoAnterior + (accion, )] += self.alpha * (reward + self.gamma *
-                           best_q - self.Q[estadoAnterior + (accion, )])
+        best_q = np.amax(self.Q[estado_sig])
+        td_target = reward + self.gamma * best_q
+        td_error = td_target - self.Q[estado + (accion, )]
+        self.Q[estado + (accion, )] += self.alpha * td_error
     # end actualizarPolitica
 
     def update_explore_rate(self, t):
-        # print('e', self.epsilon)
-        # self.epsilon = max(self.MIN_EPSILON, self.epsilon * 0.999)
-        # return True
-        # self.epsilon = max(self.MIN_EPSILON, min(1, 1.0 - math.log10((t+1)/25)))
         self.epsilon = max(self.MIN_EPSILON, min(self.epsilon, 1.0 - math.log10((t+1)/25)))
-        # self.epsilon = max(self.MIN_EPSILON, self.epsilon * 0.95)
     # end update_explore_rate
 
     def update_learning_rate(self, t):
-        # self.alpha = max(self.MIN_ALPHA, min(0.5, 1.0 - math.log10((t+1)/25)))
         self.alpha = max(self.MIN_ALPHA, min(self.alpha, 1.0 - math.log10((t+1)/25)))
-        # self.alpha = max(self.MIN_ALPHA, self.alpha * 0.95)
     # end update_learning_rate
 
-    def entrenar(self, episodios, teacherAgent=None, feedbackProbability=0):
+    def test(self, episodios):
         recompensas = []
-        epsilones = []
-        alphas = []
 
         for e in range(episodios):
-            estadoAnterior = estadoActual = self.entorno.reset()
+            estado = self.entorno.reset()
             recompensa = 0
             fin = False
 
             while not fin:
                 # self.entorno.render()
-                accion = self.accionPorFeedback(estadoActual, teacherAgent, feedbackProbability)
-                estadoActual, reward, fin, info = self.entorno.step(accion)
+                accion = self.epsilonGreedyPolicy(estado, epsilon=self.MIN_EPSILON)
+                estado_sig, reward, fin, info = self.entorno.step(accion)
+                recompensa += reward
+
+                estado = estado_sig
+            recompensas.append(recompensa)
+
+        return recompensas
+    #end test
+
+    def entrenar(self, episodios, teacherAgent=None, feedbackProbability=0):
+        recompensas = []
+        epsilones = []
+        alphas = []
+        must_train = True
+        previous_avg = 0
+
+        for e in range(episodios):
+            estado = self.entorno.reset()
+            recompensa = 0
+            fin = False
+
+            while not fin:
+                # self.entorno.render()
+                accion = self.accionPorFeedback(estado, teacherAgent, feedbackProbability)
+                estado_sig, reward, fin, info = self.entorno.step(accion)
                 recompensa += reward
 
                 #actualizar valor Q
-                self.actualizarPolitica(estadoAnterior, estadoActual, accion, reward)
-                estadoAnterior = estadoActual
+                if must_train:
+                    self.actualizarPolitica(estado, estado_sig, accion, reward)
+                estado = estado_sig
 
             # print("fin t=", t+1, 'r=', recompensa, 's=', estadoActual)
             recompensas.append(recompensa)
             epsilones.append(self.epsilon)
             alphas.append(self.alpha)
 
+            promedio = np.mean(recompensas)
+            must_train = self.test(1)[0] < self.expected_reward or promedio < previous_avg
+
             self.update_explore_rate(e)
             self.update_learning_rate(e)
+            previous_avg = promedio
 
         return recompensas, epsilones, alphas
     # end entrenar
@@ -118,10 +141,10 @@ class CartpoleDiscreto:
     # end cargar
 
 # wrapper para el espacio de observacion de continuo a discreto
-class ObservationDiscretize(gym.ObservationWrapper):
+class GymObservationDiscretize(gym.ObservationWrapper):
 
     def __init__(self, env, states_boundaries, states_fold):
-        super(ObservationDiscretize, self).__init__(env)
+        super(GymObservationDiscretize, self).__init__(env)
         self.sb = states_boundaries
         self.sf = states_fold
         self.unwrapped.rangos = states_fold
